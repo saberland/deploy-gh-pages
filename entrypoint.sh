@@ -1,75 +1,19 @@
-#!/bin/sh -l
-
-if [ -z "$COMMIT_EMAIL" ]
-then
-  COMMIT_EMAIL="${GITHUB_ACTOR}@users.noreply.github.com"
-fi
-
-if [ -z "$COMMIT_NAME" ]
-then
-  COMMIT_NAME="${GITHUB_ACTOR}"
-fi
-
-if [ -z "$BRANCH" ]
-then
-  BRANCH="gh-pages"
-fi
-
-if [ -z "$FOLDER" ]
-then
-  FOLDER=".saber/public"
-fi
-
-if [ -z "$BUILD_SCRIPT" ]
-then
-  BUILD_SCRIPT="yarn generate"
-fi
-
-# Installs Git.
-apt-get update && \
-apt-get install -y git && \
-
-# Directs the action to the the Github workspace.
-cd $GITHUB_WORKSPACE && \
-
-# Configures Git.
+#!/bin/sh
+echo '👍 Install dependencies'
+yarn > /dev/null 2>&1
+echo '👍 Building website'
+yarn generate
+echo '👍 Deploying'
+cd .saber/public
+remote_repo="https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" && \
+remote_branch="gh-pages" && \
 git init && \
-git config --global user.email "${COMMIT_EMAIL}" && \
-git config --global user.name "${COMMIT_NAME}" && \
-
-## Initializes the repository path using the access token.
-REPOSITORY_PATH="https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" && \
-
-# Checks to see if the remote exists prior to deploying.
-# If the branch doesn't exist it gets created here as an orphan.
-if [ "$(git ls-remote --heads "$REPOSITORY_PATH" "$BRANCH" | wc -l)" -eq 0 ];
-then
-  echo "Creating remote branch ${BRANCH} as it doesn't exist..."
-  git checkout "${BASE_BRANCH:-master}" && \
-  git checkout --orphan $BRANCH && \
-  git rm -rf . && \
-  touch README.md && \
-  git add README.md && \
-  git commit -m "Initial ${BRANCH} commit" && \
-  git push $REPOSITORY_PATH $BRANCH
-fi
-
-# Checks out the base branch to begin the deploy process.
-git checkout "${BASE_BRANCH:-master}" && \
-
-# Builds the project if a build script is provided.
-echo "Running build scripts... $BUILD_SCRIPT" && \
-eval "$BUILD_SCRIPT" && \
-
-if [ "$CNAME" ]; then
-  echo "Generating a CNAME file in in the $FOLDER directory..."
-  echo $CNAME > $FOLDER/CNAME
-fi
-
-# Commits the data to Github.
-echo "Deploying to GitHub..." && \
-git add -f $FOLDER && \
-
-git commit -m "Deploying to ${BRANCH} - $(date +"%T")" && \
-git push $REPOSITORY_PATH `git subtree split --prefix $FOLDER master`:$BRANCH --force && \
-echo "Deployment succesful!"
+git config user.name "${GITHUB_ACTOR}" && \
+git config user.email "${GITHUB_ACTOR}@users.noreply.github.com" && \
+git add . && \
+echo -n 'Files to Commit:' && ls -l | wc -l && \
+git commit -m'action build' > /dev/null 2>&1 && \
+git push --force $remote_repo master:$remote_branch > /dev/null 2>&1 && \
+rm -fr .git && \
+cd ../
+echo '👍 GREAT SUCCESS!'
