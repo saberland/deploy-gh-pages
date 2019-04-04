@@ -1,18 +1,13 @@
-FROM node:10-alpine
+FROM node:10
 
-# Set default locale for the environment
-ENV LC_ALL C.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+LABEL "com.github.actions.name"="Deploy Saber Website to GitHub Pages"
+LABEL "com.github.actions.description"="This action will handle the building and deploying process of your project to GitHub Pages."
+LABEL "com.github.actions.icon"="git-commit"
+LABEL "com.github.actions.color"="orange"
 
-LABEL "com.github.actions.name"="Build & Deploy to GitHub Pages"
-LABEL "com.github.actions.description"="Builds & deploys the project to GitHub Pages"
-LABEL "com.github.actions.icon"="globe"
-LABEL "com.github.actions.color"="green"
-
-LABEL "repository"="http://github.com/egosit/saber-deploy-gh-pages"
+LABEL "repository"="http://github.com/egoist/saber-deploy-gh-pages"
+LABEL "homepage"="http://github.com/egoist/saber-deploy-gh-pages"
+LABEL "maintainer"="EGOIST <0x142857@gmail.com>"
 
 ADD entrypoint.sh /entrypoint.sh
-
-
 ENTRYPOINT ["/entrypoint.sh"]
