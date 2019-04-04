@@ -20,6 +20,11 @@ then
   FOLDER=".saber/public"
 fi
 
+if [ -z "$BUILD_SCRIPT" ]
+then
+  BUILD_SCRIPT="yarn generate"
+fi
+
 # Installs Git.
 apt-get update && \
 apt-get install -y git && \
