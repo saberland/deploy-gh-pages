@@ -1,6 +1,6 @@
 #!/bin/sh
 echo '👍 Install dependencies'
-yarn > /dev/null 2>&1
+yarn
 echo '👍 Building website'
 yarn generate
 echo '👍 Deploying'
