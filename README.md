@@ -1,4 +1,4 @@
-# saber-deploy-gh-pages
+# deploy-gh-pages
 
 GitHub action for building a Saber website and deploying it to GitHub pages. 
 
@@ -13,3 +13,7 @@ action "Build and Deploy Saber" {
   secrets = ["GITHUB_TOKEN"]
 }
 ```
+
+## License
+
+MIT.
