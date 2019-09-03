@@ -9,7 +9,7 @@ workflow "Deploy Site" {
 }
 
 action "Build and Deploy Saber" {
-  uses = "egoist/saber-deploy-gh-pages@master"
+  uses = "saberland/deploy-gh-pages@master"
   secrets = ["GITHUB_TOKEN"]
 }
 ```
